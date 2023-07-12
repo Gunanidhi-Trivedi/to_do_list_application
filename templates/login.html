@@ -39,10 +39,15 @@
       <label >Password <span style="color:brown;">*</span> </label>
       <input type="password" class="form-control" placeholder="password" name="password">
     </div>
+    <!-- redirect to signup page if user not exist -->
+    <div class="form-group">
+      <a href="/api/sign_up">Not a user? Signup</a>
+    </div> 
     <div class="form-group">
       <button class="btn btn-success" type="submit">Submit</button>
     </div>
   </form>
+  
 </div>
   
   {% endblock %}
