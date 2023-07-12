@@ -165,19 +165,6 @@ def home():
 # add card
 @app.route("/api/add_card",methods=["GET","POST"])
 @login_required
-# def add_card():
-#     if request.method == "POST":
-#         title = request.form.get("title")
-#         content = request.form.get("content")
-#         deadline = request.form.get("deadline")
-#         complete = False
-#         user_id = current_user.id
-#         card = Card(titles=title,content=content,deadline=deadline,complete=complete,user_id=user_id)
-#         db.session.add(card)
-#         db.session.commit()
-#         flash("Card added successfully." , category="success")
-#         return redirect(url_for("home"))
-#     return render_template("add_card.html",user=current_user)
 def add_card():
     if request.method == "POST":
         titles = request.form.get("title")
