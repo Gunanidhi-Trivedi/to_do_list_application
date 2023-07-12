@@ -1,0 +1,64 @@
+
+
+{% extends "base.html" %}
+{% block title %} Home {% endblock %}
+{% block user %} Welcome {{ user.username }} {% endblock %}
+{% block style %} 
+
+<style>
+  #status_completed{
+    background-color: rgb(15, 238, 164);
+    border-radius: 5px;
+  }
+
+  #status_Pending{
+    background-color: rgb(242, 227, 19);
+    border-radius: 5px;
+  }
+
+  #status_deadline{
+    background-color: rgb(243, 85, 54);
+    border-radius: 5px;
+  }
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+<br>
+<h1 style="text-align: center; color: aliceblue;">Todo List</h1>
+
+<div class="row list_contaner " align="center">
+    {% for card in user.card %}
+    <div class="card" style="width: 90%;">
+      <div class="card-body">
+        <h5 class="card-title">{{ card.titles }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Deadline - {{ card.deadline }}</h6>
+        <h6 class="card-subtitle mb-2 text-muted">Last updated - {{ card.last_updated }}</h6>
+        <p class="card-text">{{ card.content }}</p>
+
+        {% if card_status(card.id) == "complete" %}
+        <p id="status_completed">Completed</p>
+        <p class="card-subtitle mb-2 text-muted"> Completed on - {{card.completion_date}}</p>
+        {% else %}
+        {% if card_status(card.id) == "pending" %}
+        <p id="status_Pending">Pending</p>
+        {% else %}
+        <p id="status_deadline">Deadline Passed</p>
+        {% endif %}
+        {% endif %}
+
+        <button type="button" class="btn btn-outline-primary card-link btn-sm" onclick="window.location.href='/api/edit_card/{{card.id}}'" >Edit card</button>
+        <button type="button" class="btn btn-outline-danger card-link btn-sm" onclick="window.location.href='/api/delete_card/{{ card.id }}'" >Delete card</button>
+      </div>
+    </div>
+    <br>
+    {% endfor %}
+  <div class="col align-self-center list">
+    <a href="/api/add_card"><img src="/static/plus.png" alt="add list" width="30" height="30"></a>
+  </div>
+</div>
+
+
+{% endblock %}
