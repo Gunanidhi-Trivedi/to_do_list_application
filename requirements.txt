@@ -1,0 +1,6 @@
+Flask
+Flask-Login
+Flask-RESTful
+Flask-SQLAlchemy
+matplotlib
+Werkzeug
