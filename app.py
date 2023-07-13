@@ -4,12 +4,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from os import path
 from flask_login import LoginManager ,login_user , login_required, logout_user,current_user
-
 from datetime import date
 
 
 
-# date string formate convertion  
+
+# other function section  #################################################################
+# date string formate convertion *********************************
+
 def date_dmy(dates):
     d = dates[8:]
     m = dates[5:7]
@@ -23,13 +25,13 @@ def date_ymd(dates):
     return y+"-"+m+"-"+d
 
 
-# card status function *********************************
-def card_status(id):
-    cards = Card.query.get(id)
-    if cards.complete == True :
+# task status function *********************************
+def task_status(id):
+    tasks = Task.query.get(id)
+    if tasks.complete == True :
         return "complete"
     else:
-        deadline_date =  date_ymd(cards.deadline)
+        deadline_date =  date_ymd(tasks.deadline)
         today = str(date.today())
 
         if deadline_date < today:
@@ -53,15 +55,16 @@ db.init_app(app)
 
 
 # modles section  #################################################################
+# define database modles **************************
 
 class User(db.Model,UserMixin):
     id = db.Column(db.Integer , primary_key = True)
     username = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(150))
     name = db.Column(db.String(150))
-    card = db.relationship("Card")
+    task = db.relationship("Task")
 
-class Card(db.Model):
+class Task(db.Model):
     id = db.Column(db.Integer , primary_key = True)
     titles = db.Column(db.String(100))
     content = db.Column(db.String(500))
@@ -73,7 +76,7 @@ class Card(db.Model):
 
 
 
-
+# automatic database creation *****************************
 def create_database(app):
     with app.app_context():
         if not path.exists("database.sqlite3"):
@@ -87,6 +90,7 @@ create_database(app)
 
 # login manager #################################################################
 # login related setup code  ********************************
+
 login_manager = LoginManager()
 login_manager.login_view = "login"
 login_manager.init_app(app)
@@ -96,6 +100,10 @@ def load_user(id):
     return User.query.get(int(id))
 
 
+
+# routes section  #################################################################
+
+# sign up ****************************************
 @app.route("/api/sign_up",methods=["GET","POST"])
 def sign_up():
     if request.method == "POST":
@@ -121,7 +129,7 @@ def sign_up():
     return render_template("sign_up.html",user = current_user)
 
 
-
+# login ****************************************
 @app.route("/api/login",methods=["GET","POST"])
 def login():
     if request.method == "POST":
@@ -154,18 +162,20 @@ def logout():
 
 
 
-# home page #################################################################
+# home page ****************************************
 @app.route("/" ,methods=["GET","POST"])
 @login_required
 def home():
-    return render_template("home.html", user=current_user,card_status = card_status)
+    return render_template("home.html", user=current_user,task_status = task_status)
 
 
-# card opration ################################################################
-# add card
-@app.route("/api/add_card",methods=["GET","POST"])
+
+#  opration ###########################################
+
+# add task ******************************
+@app.route("/api/add_task",methods=["GET","POST"])
 @login_required
-def add_card():
+def add_task():
     if request.method == "POST":
         titles = request.form.get("title")
         content = request.form.get("content")
@@ -182,23 +192,23 @@ def add_card():
         today = date_dmy(str(date.today()))
         user_id = current_user.id
 
-        new_card = Card(titles=titles, content=content, deadline=dates,last_updated = today , complete=complete,user_id=user_id, completion_date=completion_date)
-        db.session.add(new_card)
+        new_task = Task(titles=titles, content=content, deadline=dates,last_updated = today , complete=complete,user_id=user_id, completion_date=completion_date)
+        db.session.add(new_task)
         db.session.commit()
-        flash("card created! " , category="success")
+        flash("task created! " , category="success")
         return redirect(url_for("home"))
 
-    return render_template("add_card.html", user = current_user)
+    return render_template("add_task.html", user = current_user)
 
 
-# update card
-@app.route('/api/edit_card/<card_id>',methods=["GET","POST"])
+# update task 
+@app.route('/api/edit_task/<task_id>',methods=["GET","POST"])
 @login_required
-def edit_card(card_id):
-    card = Card.query.get(card_id)
-    if card:
+def edit_task(task_id):
+    task = Task.query.get(task_id)
+    if task:
         if request.method == "POST":
-            if card.user_id == current_user.id :
+            if task.user_id == current_user.id :
                 title = request.form.get("title")
                 content = request.form.get("content")
                 deadline = date_dmy(request.form.get("date"))
@@ -210,28 +220,28 @@ def edit_card(card_id):
                     complete = False
                     completion_date = None
 
-                card.titles = title
-                card.content = content
-                card.deadline = deadline
-                card.complete = complete
-                card.completion_date = completion_date
-                card.last_updated = date_dmy(str(date.today()))
+                task.titles = title
+                task.content = content
+                task.deadline = deadline
+                task.complete = complete
+                task.completion_date = completion_date
+                task.last_updated = date_dmy(str(date.today()))
                 db.session.commit()
-                flash("card updated! " , category="success")
+                flash("task updated! " , category="success")
             return redirect(url_for("home"))
-        return render_template("edit_card.html",card = card,user = current_user , date_ymd = date_ymd)
+        return render_template("edit_task.html",task = task,user = current_user , date_ymd = date_ymd)
 
 
-# delete card
-@app.route('/api/delete_card/<card_id>',methods=["GET","POST"])
+# delete task
+@app.route('/api/delete_task/<task_id>',methods=["GET","POST"])
 @login_required
-def delete_card(card_id):
-    card = Card.query.get(card_id)
-    if card:
-        if card.user_id == current_user.id :
-            db.session.delete(card)
+def delete_task(task_id):
+    task = Task.query.get(task_id)
+    if task:
+        if task.user_id == current_user.id :
+            db.session.delete(task)
             db.session.commit()
-            flash("card deleted! " , category="success")
+            flash("task deleted! " , category="success")
         return redirect(url_for("home"))
 
 

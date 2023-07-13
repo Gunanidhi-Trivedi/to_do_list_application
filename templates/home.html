@@ -30,33 +30,33 @@
 <h1 style="text-align: center; color: aliceblue;">Todo List</h1>
 
 <div class="row list_contaner " align="center">
-    {% for card in user.card %}
+    {% for task in user.task %}
     <div class="card" style="width: 90%;">
       <div class="card-body">
-        <h5 class="card-title">{{ card.titles }}</h5>
-        <h6 class="card-subtitle mb-2 text-muted">Deadline - {{ card.deadline }}</h6>
-        <h6 class="card-subtitle mb-2 text-muted">Last updated - {{ card.last_updated }}</h6>
-        <p class="card-text">{{ card.content }}</p>
+        <h5 class="card-title">{{ task.titles }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Deadline - {{ task.deadline }}</h6>
+        <h6 class="card-subtitle mb-2 text-muted">Last updated - {{ task.last_updated }}</h6>
+        <p class="card-text">{{ task.content }}</p>
 
-        {% if card_status(card.id) == "complete" %}
+        {% if task_status(task.id) == "complete" %}
         <p id="status_completed">Completed</p>
-        <p class="card-subtitle mb-2 text-muted"> Completed on - {{card.completion_date}}</p>
+        <p class="card-subtitle mb-2 text-muted"> Completed on - {{task.completion_date}}</p>
         {% else %}
-        {% if card_status(card.id) == "pending" %}
+        {% if task_status(task.id) == "pending" %}
         <p id="status_Pending">Pending</p>
         {% else %}
         <p id="status_deadline">Deadline Passed</p>
         {% endif %}
         {% endif %}
 
-        <button type="button" class="btn btn-outline-primary card-link btn-sm" onclick="window.location.href='/api/edit_card/{{card.id}}'" >Edit card</button>
-        <button type="button" class="btn btn-outline-danger card-link btn-sm" onclick="window.location.href='/api/delete_card/{{ card.id }}'" >Delete card</button>
+        <button type="button" class="btn btn-outline-primary card-link btn-sm" onclick="window.location.href='/api/edit_task/{{task.id}}'" >Edit</button>
+        <button type="button" class="btn btn-outline-danger card-link btn-sm" onclick="window.location.href='/api/delete_task/{{ task.id }}'" >Delete</button>
       </div>
     </div>
     <br>
     {% endfor %}
   <div class="col align-self-center list">
-    <a href="/api/add_card"><img src="/static/plus.png" alt="add list" width="30" height="30"></a>
+    <a href="/api/add_task"><img src="/static/plus.png" alt="add list" width="30" height="30"></a>
   </div>
 </div>
 

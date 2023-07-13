@@ -22,12 +22,13 @@
 
 .list_contaner{
     
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 20%;
+    padding-right: 20%;
     padding-top: 30px;
     padding-bottom: 30px;
     justify-content: space-around;
     row-gap: 50px;
+    align-items: center;
     
 
 
