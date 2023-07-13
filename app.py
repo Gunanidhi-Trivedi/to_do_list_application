@@ -201,7 +201,7 @@ def add_task():
     return render_template("add_task.html", user = current_user)
 
 
-# update task 
+# update task  ******************************
 @app.route('/api/edit_task/<task_id>',methods=["GET","POST"])
 @login_required
 def edit_task(task_id):
@@ -232,7 +232,7 @@ def edit_task(task_id):
         return render_template("edit_task.html",task = task,user = current_user , date_ymd = date_ymd)
 
 
-# delete task
+# delete task ******************************
 @app.route('/api/delete_task/<task_id>',methods=["GET","POST"])
 @login_required
 def delete_task(task_id):
@@ -245,6 +245,9 @@ def delete_task(task_id):
         return redirect(url_for("home"))
 
 
+
+
 if __name__ == "__main__":
+    # start the app
     app.run(debug=False)
 
